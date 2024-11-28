@@ -78,52 +78,20 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>AI Prompt Interaction</h1>
-        <form id="questionForm" method = "POST" action="/prompts">
-            <label for="question">Ask your question:</label>
-            <input type="text" id="question" name="question" placeholder="Type your question here..." required>
-            <button type="submit">Get Response</button>
-        </form>
-        <div class="response-container" id="responseContainer">
-            <!-- AI Responses will be appended here dynamically -->
+    <body>
+        <div class="container">
+            <h1>AI Prompt Interaction</h1>
+            <form id="questionForm" method="POST" action="/prompts">
+                <label for="question">Ask your question:</label>
+                <input type="text" id="question" name="question" placeholder="Type your question here..." required>
+                <button type="submit">Get Response</button>
+            </form>
+            {% if question %}
+            <div class="response-container">
+                <div class="response">{{ question }}</div>
+            </div>
+            {% endif %}
         </div>
-    </div>
-
-    <script>
-        const form = document.getElementById("questionForm");
-        const responseContainer = document.getElementById("responseContainer");
-
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-        
-            const question = document.getElementById("question").value;
-        
-            const response = await fetch("/prompts", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ prompt: question }),
-            });
-        
-            if (response.ok) {
-                const data = await response.json();
-                const aiResponse = data.generated_response || "No response received.";
-        
-                const responseDiv = document.createElement("div");
-                responseDiv.classList.add("response");
-                responseDiv.textContent = aiResponse;
-                responseContainer.appendChild(responseDiv);
-            } else {
-                const errorDiv = document.createElement("div");
-                errorDiv.classList.add("response");
-                errorDiv.textContent = "Error fetching response. Please try again.";
-                responseContainer.appendChild(errorDiv);
-            }
-            document.getElementById("question").value = "";
-        });
-        
-    </script>
+    </body>
 </body>
 </html>

@@ -86,7 +86,11 @@ def prompts():
     }
 
     response = requests.post(url, json=payload, headers=headers)
-    answer = response.get("text")
+    try:
+        response_data = response.json()
+        answer = response_data.get("text", "No response received from API.")
+    except Exception as e:
+        answer = "Error parsing API response."
 
     return render_template("prompts.html", question = answer)
 
