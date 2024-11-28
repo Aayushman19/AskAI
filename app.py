@@ -5,14 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 import secrets
-from modules.web_application.models.model import db, User, ScrapedData, PromptLog
+from modules.models.model import db, User, ScrapedData, PromptLog
 import requests
 from bs4 import BeautifulSoup
 import json
 
 load_dotenv()
 
-app = Flask(__name__, template_folder="modules/web_application/templates")
+app = Flask(__name__, template_folder="modules/templates", static_folder="modules/static")
 
 rapidapi_key = os.getenv("RAPIDAPI_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
@@ -65,32 +65,37 @@ def dashboard():
 
 @app.route("/prompts", methods=["GET","POST"])
 def prompts():
-    user_prompt = request.form.get("question")
-    url = "https://chatgpt-api8.p.rapidapi.com/"
+    answer = None
+    if request.method == "POST":
+        user_prompt = request.form.get("question")
+        url = "https://chatgpt-42.p.rapidapi.com/gpt4"
 
-    payload = [
-	    {
-		    "content": "Hello! I'm an AI assistant bot based on ChatGPT 3. How may I help you?",
-		    "role": "system"
-	    },
-	    {
-		    "content": user_prompt,
-		    "role": "user"
-	    }
-    ]
+        payload = {
+	        "messages": [
+		        {
+			        "role": "user",
+			        "content": user_prompt
+		        }
+	        ],
+	        "web_access": False
+        }
+        headers = {
+	        "x-rapidapi-key": rapidapi_key,
+	        "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
+	        "Content-Type": "application/json"
+        }
 
-    headers = {
-	    "x-rapidapi-key": rapidapi_key,
-	    "x-rapidapi-host": "chatgpt-api8.p.rapidapi.com",
-	    "Content-Type": "application/json"
-    }
-
-    response = requests.post(url, json=payload, headers=headers)
-    try:
+        response = requests.post(url, json=payload, headers=headers)
         response_data = response.json()
-        answer = response_data.get("text", "No response received from API.")
-    except Exception as e:
-        answer = "Error parsing API response."
+        answer = response_data.get("result")
+
+        promptLog = PromptLog(
+            prompt_text = user_prompt,
+            generated_output = answer,
+            created_by_user_id = session.get("user_id")
+        )
+        db.session.add(promptLog)
+        db.session.commit()
 
     return render_template("prompts.html", question = answer)
 

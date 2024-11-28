@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/modules/static/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'dashboard.css') }}">
 </head>
 <body>
     <div class="dashboard-container">
@@ -15,7 +15,7 @@
         <div class="main-content">
             <div class="card"><a href="/prompts">Prompts</a></div>
             <div class="card"><a href="/scraper">Web Scraper</a></div>
-            <div class="card">Settings</div>
+            <div class="card">Profile</div>
         </div>
     </div>
 </body>

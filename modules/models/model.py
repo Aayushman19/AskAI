@@ -32,6 +32,5 @@ class PromptLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     prompt_text = db.Column(db.Text, nullable=False)
     generated_output = db.Column(db.Text, nullable=True)
-    tokens_used = db.Column(db.Integer, nullable=True)
 
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
