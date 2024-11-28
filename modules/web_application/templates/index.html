@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskAI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .logo {
+            color: purple;
+            font-size: 100px;
+            font-weight: bold;
+            font-style: italic;
+            margin-bottom: 50px;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        button {
+            background-color: purple;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: darkmagenta;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">ASKAI</div>
+    <div class="button-container">
+        <a href="{{url_for('login')}}"><button>Login</button></a>
+        <a href="{{url_for('signup')}}"><button>Signup</button></a>
+    </div>
+</body>
+</html>

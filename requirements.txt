@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+python-dotenv
+psycopg2-binary
+Flask-WTF
+Flask-Bcrypt
+psycopg2-binary 
+flask-wtf
+beautifulsoup4
+requests
