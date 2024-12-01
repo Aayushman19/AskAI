@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
+from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
