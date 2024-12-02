@@ -1,14 +1,15 @@
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
+from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-import os
+import os, logging
 import secrets
 from modules.models.model import db, User, ScrapedData, PromptLog
 import requests
 from bs4 import BeautifulSoup
 import json
+from flask_mail import Mail, Message
 
 load_dotenv()
 
@@ -17,10 +18,31 @@ app = Flask(__name__, template_folder="modules/templates", static_folder="module
 rapidapi_key = os.getenv("RAPIDAPI_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SECRET_KEY'] = secrets.token_hex(32)
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
 
 db.init_app(app)
 
 bcrypt = Bcrypt(app)
+
+file_handler = logging.FileHandler(filename='app.log', mode='w')
+stream_handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s')
+
+file_handler.setFormatter(formatter)
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers= [file_handler, stream_handler]
+)
+
+logger = logging.getLogger(__name__)
 
 try:
     with app.app_context():
@@ -150,6 +172,24 @@ def signup():
         if user_exists:
             return redirect(url_for('login'))
         
+        if not email or not name:
+            logger.warning("Username or Email does not exist")
+            return 400
+        
+        logger.info(f"Signup attempt for user: {name}, Email: {email}")
+        try:
+            msg = Message(
+                "",
+                sender=os.getenv('MAIL_USERNAME'),
+                recipients=[email]
+            )
+            msg.html = render_template("mail.html", name = name)
+            mail.send(msg)
+        
+            logger.info(f"Signup email sent to {email}")
+        except:
+            logger.info(f"Mail not sent to {mail}")
+
         new_user = User(name = name, email = email, passwords = password)
         db.session.add(new_user)
         db.session.commit()

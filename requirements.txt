@@ -8,3 +8,4 @@ psycopg2-binary
 flask-wtf
 beautifulsoup4
 requests
+flask_mail
