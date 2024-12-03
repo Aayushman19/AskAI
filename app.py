@@ -85,6 +85,16 @@ def dashboard():
     user_name = session.get("user_name", "User")
     return render_template("dashboard.html", user_name = user_name)
 
+@app.route('/profile', methods=["GET", "POST"])
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = User.query.get('user_id')
+    
+
+    return render_template('profile.html')
+
 @app.route("/prompts", methods=["GET","POST"])
 def prompts():
     answer = None

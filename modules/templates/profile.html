@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'profile.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-image">
+            {% if profile_picture %}
+                <img src="{{ profile_picture }}" alt="Profile Picture">
+            {% else %}
+                <img src="/static/jaishreeram.jpg" alt="Default Profile Picture">
+            {% endif %}
+            <form action="/upload_profile_picture" method="POST" enctype="multipart/form-data">
+                <input type="file" name="profile_picture" accept="image/*">
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+        <div class="details">
+            <div><strong>Username : </strong> {{ name }}</div>
+            <div><strong>AskAI Age : </strong> {{ days_since_join }}</div>
+            <div><strong>AI Tool Uses : </strong> {{ ai_tool_uses }}</div>
+            <div><strong>Web Scraper Tool Uses : </strong> {{ scraper_tool_uses }}</div>
+        </div>
+    </div>
+</body>
+</html>
