@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
 from flask_bcrypt import Bcrypt
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os, logging
@@ -8,7 +8,7 @@ import secrets
 from modules.models.model import db, User, ScrapedData, PromptLog
 import requests
 from bs4 import BeautifulSoup
-import json
+import json, pytz
 from flask_mail import Mail, Message
 
 load_dotenv()
@@ -90,10 +90,25 @@ def profile():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    user = User.query.get('user_id')
-    
+    user_id = session['user_id']
+    user = User.query.get(user_id)
 
-    return render_template('profile.html')
+    currTime = datetime.now(timezone.utc)
+
+    if user.created_at.tzinfo is None:
+        created_at_aware = user.created_at.replace(tzinfo=timezone.utc)
+    else:
+        created_at_aware = user.created_at
+    
+    doj = (currTime - created_at_aware).days
+    uses_ai = len(user.prompt_logs)
+    uses_web = len(user.scraped_data)
+
+    return render_template("profile.html", 
+            name = user.name, 
+            days_since_join = doj,
+            ai_tool_uses = uses_ai,
+            scraper_tool_uses = uses_web)
 
 @app.route("/prompts", methods=["GET","POST"])
 def prompts():

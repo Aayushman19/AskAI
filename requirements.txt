@@ -10,3 +10,4 @@ beautifulsoup4
 requests
 flask_mail
 psycopg2
+pytz
