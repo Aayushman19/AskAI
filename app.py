@@ -18,14 +18,7 @@ app = Flask(__name__, template_folder="modules/templates", static_folder="module
 rapidapi_key = os.getenv("RAPIDAPI_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
 
-mail = Mail(app)
 
 db.init_app(app)
 
@@ -197,23 +190,6 @@ def signup():
         if user_exists:
             return redirect(url_for('login'))
         
-        if not email or not name:
-            logger.warning("Username or Email does not exist")
-            return 400
-        
-        logger.info(f"Signup attempt for user: {name}, Email: {email}")
-        try:
-            msg = Message(
-                "",
-                sender=os.getenv('MAIL_USERNAME'),
-                recipients=[email]
-            )
-            msg.html = render_template("mail.html", name = name)
-            mail.send(msg)
-        
-            logger.info(f"Signup email sent to {email}")
-        except:
-            logger.info(f"Mail not sent to {mail}")
 
         new_user = User(name = name, email = email, passwords = password)
         db.session.add(new_user)
