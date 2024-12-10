@@ -1,13 +1,13 @@
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, jsonify
+from flask import Flask, render_template, flash, redirect, url_for, session, request
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-import os, logging
+import os
 from modules.models.model import db, User, ScrapedData, PromptLog
 import requests
 from bs4 import BeautifulSoup
-import json, pytz
+import json
 
 load_dotenv()
 
@@ -22,18 +22,6 @@ db.init_app(app)
 
 bcrypt = Bcrypt(app)
 
-file_handler = logging.FileHandler(filename='app.log', mode='w')
-stream_handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s')
-
-file_handler.setFormatter(formatter)
-
-logging.basicConfig(
-    level=logging.INFO,
-    handlers= [file_handler, stream_handler]
-)
-
-logger = logging.getLogger(__name__)
 
 try:
     with app.app_context():
