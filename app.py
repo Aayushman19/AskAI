@@ -4,12 +4,10 @@ from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os, logging
-import secrets
 from modules.models.model import db, User, ScrapedData, PromptLog
 import requests
 from bs4 import BeautifulSoup
 import json, pytz
-from flask_mail import Mail, Message
 
 load_dotenv()
 
